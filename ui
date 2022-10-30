@@ -1,0 +1,70 @@
+library(shiny)
+library(leaflet)
+
+
+
+r_colors <- rgb(t(col2rgb(colors()) / 255))
+names(r_colors) <- colors()
+
+pagePiling(
+  center = TRUE,
+  sections.color = c('#f2f2f2', '#2C3E50', '#39C'),
+  opts = options,
+  menu = c("Images" = "images",
+           "Plots" = "section3",
+           "Reactive" = "section4",
+           "Map" = "map"
+           
+  ),
+  
+  pageSectionImage(
+    menu = "images",
+    img = paste0(
+      "https://raw.githubusercontent.com/alvarotrigo/",
+      "fullPage.js/master/examples/imgs/bg2.jpg"),
+    h1("Image background")
+  ),
+
+  pageSectionPlot(
+    
+    menu = "section3",
+    h1("Plot background"),
+     fluidRow(
+
+       column(4,wellPanel(selectInput("comornot", "Select", c("noncom","com")))),
+      # column(4,wellPanel(
+       #  leafletOutput("mymap"),
+        # p(),
+         #actionButton("recalc","New points")),
+       column(4,wellPanel(
+         selectInput("comornot", "Select", c("noncom","com"))),
+         plotOutput("line"))
+     )
+  ),
+  
+  pageSectionPlot(
+    "plot2",
+    menu="section4",
+    
+    pageContainer(
+      h1("Reactive background"),
+      sliderInput(
+        "bins",
+        "Data Points",
+        min = 100,
+        max = 500,
+        step = 25,
+        value = 200
+      ),
+      mod_map_ui("map")
+    )
+  
+),
+  
+  pageSection(
+    center = TRUE,
+    menu = "map",
+    h1("hello")
+  )
+
+)
