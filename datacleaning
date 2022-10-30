@@ -1,0 +1,711 @@
+# put data into data frame
+
+y2k <- read.csv("Mortality by country y2k.csv",na.strings = c("","NA"))
+y2010 <- read.csv("Mortality by country y2010.csv",na.strings = c("","NA"))
+y2015 <- read.csv("Mortality by country y2015.csv",na.strings = c("","NA"))
+y2019 <- read.csv("Mortality by country y2019.csv",na.strings = c("","NA"))
+y2k_df <- data.frame(y2k)
+y2010_df <- data.frame(y2010)
+y2015_df <- data.frame(y2015)
+y2019_df <- data.frame(y2019)
+
+
+# remove rows
+
+y2k_df <- y2k_df[-(1:5),]
+y2010_df <- y2010_df[-(1:5),]
+y2015_df <- y2015_df[-(1:5),]
+y2019_df <- y2019_df[-(1:5),]
+
+
+# set header
+
+names(y2k_df) <- y2k_df[1,]
+y2k_df <- y2k_df[-(1:3),]
+
+names(y2010_df) <- y2010_df[1,]
+y2010_df <- y2010_df[-(1:3),]
+
+names(y2015_df) <- y2015_df[1,]
+y2015_df <- y2015_df[-(1:3),]
+names(y2019_df) <- y2019_df[1,]
+y2019_df <- y2019_df[-(1:3),]
+
+
+#remove extra columns
+
+y2k_df <- y2k_df[,-which(names(y2k_df) %in% ("NA"))]
+y2010_df <- y2010_df[,-which(names(y2010_df) %in% ("NA"))]
+y2015_df <- y2015_df[,-which(names(y2015_df) %in% ("NA"))]
+y2019_df <- y2019_df[,-which(names(y2019_df) %in% ("NA"))]
+
+
+# split male female total
+
+y2k_total <- y2k_df[is.element(y2k_df$Sex,'Persons'),]
+y2k_male <- y2k_df[is.element(y2k_df$Sex,'Males'),]
+y2k_female <- y2k_df[is.element(y2k_df$Sex,'Females'),]
+
+y2010_total <- y2010_df[is.element(y2010_df$Sex,'Persons'),]
+y2010_male <- y2010_df[is.element(y2010_df$Sex,'Males'),]
+y2010_female <- y2010_df[is.element(y2010_df$Sex,'Females'),]
+
+y2015_total <- y2015_df[is.element(y2015_df$Sex,'Persons'),]
+y2015_male <- y2015_df[is.element(y2015_df$Sex,'Males'),]
+y2015_female <- y2015_df[is.element(y2015_df$Sex,'Females'),]
+
+y2019_total <- y2019_df[is.element(y2019_df$Sex,'Persons'),]
+y2019_male <- y2019_df[is.element(y2019_df$Sex,'Males'),]
+y2019_female <- y2019_df[is.element(y2019_df$Sex,'Females'),]
+
+
+# remove injuries
+
+y2k_total <- y2k_total[-((which(y2k_total$`GHE cause`=='Injuries')):nrow(y2k_total)),]
+y2010_total <- y2010_total[-((which(y2010_total$`GHE cause`=='Injuries')):nrow(y2010_total)),]
+y2015_total <- y2015_total[-((which(y2015_total$`GHE cause`=='Injuries')):nrow(y2015_total)),]
+y2019_total <- y2019_total[-((which(y2019_total$`GHE cause`=='Injuries')):nrow(y2019_total)),]
+
+y2k_male <- y2k_male[-((which(y2k_male$`GHE cause`=='Injuries')):nrow(y2k_male)),]
+y2010_male <- y2010_male[-((which(y2010_male$`GHE cause`=='Injuries')):nrow(y2010_male)),]
+y2015_male <- y2015_male[-((which(y2015_male$`GHE cause`=='Injuries')):nrow(y2015_male)),]
+y2019_male <- y2019_male[-((which(y2019_male$`GHE cause`=='Injuries')):nrow(y2019_male)),]
+
+y2k_female <- y2k_female[-((which(y2k_female$`GHE cause`=='Injuries')):nrow(y2k_female)),]
+y2010_female <- y2010_female[-((which(y2010_female$`GHE cause`=='Injuries')):nrow(y2010_female)),]
+y2015_female <- y2015_female[-((which(y2015_female$`GHE cause`=='Injuries')):nrow(y2015_female)),]
+y2019_female <- y2019_female[-((which(y2019_female$`GHE cause`=='Injuries')):nrow(y2019_female)),]
+
+
+# Remove unnecessary rows
+
+## doesn't work for some reason
+df_list <- list(y2k_total,y2k_male,y2k_female,y2010_total,y2010_male,y2010_female,y2015_total,y2015_male,y2015_female,y2019_total,y2019_male,y2019_female)
+# 
+# diseasefx <- function(a){
+#   for(i in 4:6){
+#     for (j in 1:(nrow(a)-1)) {
+#       
+#       print(a[j,i])
+#       # if data has no '.' & is not empty
+#       if(!(grepl(".",a[j,i], fixed = TRUE)) & !(is.na(a[j,i]))){
+#         if((grepl(".",a[j+1,i], fixed = TRUE))){
+#           a <- a[-j,]
+#           print("deleted")
+#         }
+#       }
+#     }
+#   }
+# }
+# 
+# lapply(df_list,diseasefx)
+
+## for y2k_total
+for(i in 4:6){
+  for (j in 1:(nrow(y2k_total)-1)) {
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2k_total[j,i], fixed = TRUE)) & !(is.na(y2k_total[j,i]))){
+      if((grepl(".",y2k_total[j+1,i], fixed = TRUE))){
+        y2k_total <- y2k_total[-c(j),]
+      }
+    }
+  }
+}
+
+## for y2k_male
+for(i in 4:6){
+  for (j in 1:(nrow(y2k_male)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2k_male[j,i], fixed = TRUE)) & !(is.na(y2k_male[j,i]))){
+      if((grepl(".",y2k_male[j+1,i], fixed = TRUE))){
+        y2k_male <- y2k_male[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2k_female
+for(i in 4:6){
+  for (j in 1:(nrow(y2k_female)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2k_female[j,i], fixed = TRUE)) & !(is.na(y2k_female[j,i]))){
+      if((grepl(".",y2k_female[j+1,i], fixed = TRUE))){
+        y2k_female <- y2k_female[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2010_total
+for(i in 4:6){
+  for (j in 1:(nrow(y2010_total)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2010_total[j,i], fixed = TRUE)) & !(is.na(y2010_total[j,i]))){
+      if((grepl(".",y2010_total[j+1,i], fixed = TRUE))){
+        y2010_total <- y2010_total[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2010_male
+for(i in 4:6){
+  for (j in 1:(nrow(y2010_male)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2010_male[j,i], fixed = TRUE)) & !(is.na(y2010_male[j,i]))){
+      if((grepl(".",y2010_male[j+1,i], fixed = TRUE))){
+        y2010_male <- y2010_male[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2010_female
+for(i in 4:6){
+  for (j in 1:(nrow(y2010_female)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2010_female[j,i], fixed = TRUE)) & !(is.na(y2010_female[j,i]))){
+      if((grepl(".",y2010_female[j+1,i], fixed = TRUE))){
+        y2010_female <- y2010_female[-c(j),]
+        
+      }
+    }
+  }
+}
+
+# for y2015_total
+for(i in 4:6){
+  for (j in 1:(nrow(y2015_total)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2015_total[j,i], fixed = TRUE)) & !(is.na(y2015_total[j,i]))){
+      if((grepl(".",y2015_total[j+1,i], fixed = TRUE))){
+        y2015_total <- y2015_total[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2015_male
+for(i in 4:6){
+  for (j in 1:(nrow(y2015_male)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2015_male[j,i], fixed = TRUE)) & !(is.na(y2015_male[j,i]))){
+      if((grepl(".",y2015_male[j+1,i], fixed = TRUE))){
+        y2015_male <- y2015_male[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2015_female
+for(i in 4:6){
+  for (j in 1:(nrow(y2015_female)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2015_female[j,i], fixed = TRUE)) & !(is.na(y2015_female[j,i]))){
+      if((grepl(".",y2015_female[j+1,i], fixed = TRUE))){
+        y2015_female <- y2015_female[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2019_total
+for(i in 4:6){
+  for (j in 1:(nrow(y2019_total)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2019_total[j,i], fixed = TRUE)) & !(is.na(y2019_total[j,i]))){
+      if((grepl(".",y2019_total[j+1,i], fixed = TRUE))){
+        y2019_total <- y2019_total[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2019_male
+for(i in 4:6){
+  for (j in 1:(nrow(y2019_male)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2019_male[j,i], fixed = TRUE)) & !(is.na(y2019_male[j,i]))){
+      if((grepl(".",y2019_male[j+1,i], fixed = TRUE))){
+        y2019_male <- y2019_male[-c(j),]
+        
+      }
+    }
+  }
+}
+
+## for y2019_female
+for(i in 4:6){
+  for (j in 1:(nrow(y2019_female)-1)) {
+    
+    # if data has no '.' & is not empty
+    if(!(grepl(".",y2019_female[j,i], fixed = TRUE)) & !(is.na(y2019_female[j,i]))){
+      if((grepl(".",y2019_female[j+1,i], fixed = TRUE))){
+        y2019_female <- y2019_female[-c(j),]
+        
+      }
+    }
+  }
+}
+
+
+# Group disease name under 1 column function
+
+## for y2k_total
+for (i in 1:(nrow(y2k_total))) {
+  if(is.na(y2k_total[i,4]) | (grepl(".",y2k_total[i,4], fixed = TRUE))){
+    y2k_total[i,4]
+    grepl(".",y2k_total[i,4], fixed = TRUE)
+    if(is.na(y2k_total[i,7])){
+      if(is.na(y2k_total[i,6])){
+        y2k_total[i,4] <- y2k_total[i,5]
+      }
+      else{
+        y2k_total[i,4] <- y2k_total[i,6]
+      }
+    }
+    else{
+      y2k_total[i,4] <- y2k_total[i,7]
+    }
+  }
+}
+y2k_total <- y2k_total[,-c(3,5,6,7)]
+
+## for y2k_male
+for (i in 1:(nrow(y2k_male))) {
+  if(is.na(y2k_male[i,4]) | (grepl(".",y2k_male[i,4], fixed = TRUE))){
+    y2k_male[i,4]
+    grepl(".",y2k_male[i,4], fixed = TRUE)
+    if(is.na(y2k_male[i,7])){
+      if(is.na(y2k_male[i,6])){
+        y2k_male[i,4] <- y2k_male[i,5]
+      }
+      else{
+        y2k_male[i,4] <- y2k_male[i,6]
+      }
+    }
+    else{
+      y2k_male[i,4] <- y2k_male[i,7]
+    }
+  }
+}
+y2k_male <- y2k_male[,-c(3,5,6,7)]
+
+## for y2k_female
+for (i in 1:(nrow(y2k_female))) {
+  if(is.na(y2k_female[i,4]) | (grepl(".",y2k_female[i,4], fixed = TRUE))){
+    y2k_female[i,4]
+    grepl(".",y2k_female[i,4], fixed = TRUE)
+    if(is.na(y2k_female[i,7])){
+      if(is.na(y2k_female[i,6])){
+        y2k_female[i,4] <- y2k_female[i,5]
+      }
+      else{
+        y2k_female[i,4] <- y2k_female[i,6]
+      }
+    }
+    else{
+      y2k_female[i,4] <- y2k_female[i,7]
+    }
+  }
+}
+y2k_female <- y2k_female[,-c(3,5,6,7)]
+
+## for y2010_total
+for (i in 1:(nrow(y2010_total))) {
+  if(is.na(y2010_total[i,4]) | (grepl(".",y2010_total[i,4], fixed = TRUE))){
+    y2010_total[i,4]
+    grepl(".",y2010_total[i,4], fixed = TRUE)
+    if(is.na(y2010_total[i,7])){
+      if(is.na(y2010_total[i,6])){
+        y2010_total[i,4] <- y2010_total[i,5]
+      }
+      else{
+        y2010_total[i,4] <- y2010_total[i,6]
+      }
+    }
+    else{
+      y2010_total[i,4] <- y2010_total[i,7]
+    }
+  }
+}
+y2010_total <- y2010_total[,-c(3,5,6,7)]
+
+## for y2010_male
+for (i in 1:(nrow(y2010_male))) {
+  if(is.na(y2010_male[i,4]) | (grepl(".",y2010_male[i,4], fixed = TRUE))){
+    y2010_male[i,4]
+    grepl(".",y2010_male[i,4], fixed = TRUE)
+    if(is.na(y2010_male[i,7])){
+      if(is.na(y2010_male[i,6])){
+        y2010_male[i,4] <- y2010_male[i,5]
+      }
+      else{
+        y2010_male[i,4] <- y2010_male[i,6]
+      }
+    }
+    else{
+      y2010_male[i,4] <- y2010_male[i,7]
+    }
+  }
+}
+y2010_male <- y2010_male[,-c(3,5,6,7)]
+
+## for y2010_female
+for (i in 1:(nrow(y2010_female))) {
+  if(is.na(y2010_female[i,4]) | (grepl(".",y2010_female[i,4], fixed = TRUE))){
+    y2010_female[i,4]
+    grepl(".",y2010_female[i,4], fixed = TRUE)
+    if(is.na(y2010_female[i,7])){
+      if(is.na(y2010_female[i,6])){
+        y2010_female[i,4] <- y2010_female[i,5]
+      }
+      else{
+        y2010_female[i,4] <- y2010_female[i,6]
+      }
+    }
+    else{
+      y2010_female[i,4] <- y2010_female[i,7]
+    }
+  }
+}
+y2010_female <- y2010_female[,-c(3,5,6,7)]
+
+## for y2015_total
+for (i in 1:(nrow(y2015_total))) {
+  if(is.na(y2015_total[i,4]) | (grepl(".",y2015_total[i,4], fixed = TRUE))){
+    y2015_total[i,4]
+    grepl(".",y2015_total[i,4], fixed = TRUE)
+    if(is.na(y2015_total[i,7])){
+      if(is.na(y2015_total[i,6])){
+        y2015_total[i,4] <- y2015_total[i,5]
+      }
+      else{
+        y2015_total[i,4] <- y2015_total[i,6]
+      }
+    }
+    else{
+      y2015_total[i,4] <- y2015_total[i,7]
+    }
+  }
+}
+y2015_total <- y2015_total[,-c(3,5,6,7)]
+
+## for y2015_male
+for (i in 1:(nrow(y2015_male))) {
+  if(is.na(y2015_male[i,4]) | (grepl(".",y2015_male[i,4], fixed = TRUE))){
+    y2015_male[i,4]
+    grepl(".",y2015_male[i,4], fixed = TRUE)
+    if(is.na(y2015_male[i,7])){
+      if(is.na(y2015_male[i,6])){
+        y2015_male[i,4] <- y2015_male[i,5]
+      }
+      else{
+        y2015_male[i,4] <- y2015_male[i,6]
+      }
+    }
+    else{
+      y2015_male[i,4] <- y2015_male[i,7]
+    }
+  }
+}
+y2015_male <- y2015_male[,-c(3,5,6,7)]
+
+## for y2015_female
+for (i in 1:(nrow(y2015_female))) {
+  if(is.na(y2015_female[i,4]) | (grepl(".",y2015_female[i,4], fixed = TRUE))){
+    y2015_female[i,4]
+    grepl(".",y2015_female[i,4], fixed = TRUE)
+    if(is.na(y2015_female[i,7])){
+      if(is.na(y2015_female[i,6])){
+        y2015_female[i,4] <- y2015_female[i,5]
+      }
+      else{
+        y2015_female[i,4] <- y2015_female[i,6]
+      }
+    }
+    else{
+      y2015_female[i,4] <- y2015_female[i,7]
+    }
+  }
+}
+y2015_female <- y2015_female[,-c(3,5,6,7)]
+
+## for y2019_total
+for (i in 1:(nrow(y2019_total))) {
+  if(is.na(y2019_total[i,4]) | (grepl(".",y2019_total[i,4], fixed = TRUE))){
+    y2019_total[i,4]
+    grepl(".",y2019_total[i,4], fixed = TRUE)
+    if(is.na(y2019_total[i,7])){
+      if(is.na(y2019_total[i,6])){
+        y2019_total[i,4] <- y2019_total[i,5]
+      }
+      else{
+        y2019_total[i,4] <- y2019_total[i,6]
+      }
+    }
+    else{
+      y2019_total[i,4] <- y2019_total[i,7]
+    }
+  }
+}
+y2019_total <- y2019_total[,-c(3,5,6,7)]
+
+## for y2019_male
+for (i in 1:(nrow(y2019_male))) {
+  if(is.na(y2019_male[i,4]) | (grepl(".",y2019_male[i,4], fixed = TRUE))){
+    y2019_male[i,4]
+    grepl(".",y2019_male[i,4], fixed = TRUE)
+    if(is.na(y2019_male[i,7])){
+      if(is.na(y2019_male[i,6])){
+        y2019_male[i,4] <- y2019_male[i,5]
+      }
+      else{
+        y2019_male[i,4] <- y2019_male[i,6]
+      }
+    }
+    else{
+      y2019_male[i,4] <- y2019_male[i,7]
+    }
+  }
+}
+y2019_male <- y2019_male[,-c(3,5,6,7)]
+
+## for y2019_female
+for (i in 1:(nrow(y2019_female))) {
+  if(is.na(y2019_female[i,4]) | (grepl(".",y2019_female[i,4], fixed = TRUE))){
+    y2019_female[i,4]
+    grepl(".",y2019_female[i,4], fixed = TRUE)
+    if(is.na(y2019_female[i,7])){
+      if(is.na(y2019_female[i,6])){
+        y2019_female[i,4] <- y2019_female[i,5]
+      }
+      else{
+        y2019_female[i,4] <- y2019_female[i,6]
+      }
+    }
+    else{
+      y2019_female[i,4] <- y2019_female[i,7]
+    }
+  }
+}
+y2019_female <- y2019_female[,-c(3,5,6,7)]
+
+
+# replace all instances of . to 0
+
+y2k_total[y2k_total=="."] <- "0"
+y2k_male[y2k_male=="."] <- "0"
+y2k_female[y2k_female=="."] <- "0"
+y2010_total[y2010_total=="."] <- "0"
+y2010_male[y2010_male=="."] <- "0"
+y2010_female[y2010_female=="."] <- "0"
+y2015_total[y2015_total=="."] <- "0"
+y2015_male[y2015_male=="."] <- "0"
+y2015_female[y2015_female=="."] <- "0"
+y2019_total[y2019_total=="."] <- "0"
+y2019_male[y2019_male=="."] <- "0"
+y2019_female[y2019_female=="."] <- "0"
+
+
+# multiply all numbers by 1000
+
+## for y2k_total
+for (i in 1:nrow(y2k_total)) {
+  for (j in 4:ncol(y2k_total)) {
+    if(grepl(",",y2k_total[i,j], fixed = TRUE)){
+      y2k_total[i,j] <- gsub(',','',as.character(y2k_total[i,j]))
+      y2k_total[i,j]
+    }
+    if(!grepl("0.0",y2k_total[i,j], fixed = TRUE)){
+      y2k_total[i,j] <- 1000*(as.numeric(y2k_total[i,j]))
+    }
+  }
+}
+
+## for y2k_male
+for (i in 1:nrow(y2k_male)) {
+  for (j in 4:ncol(y2k_male)) {
+    if(grepl(",",y2k_male[i,j], fixed = TRUE)){
+      y2k_male[i,j] <- gsub(',','',as.character(y2k_male[i,j]))
+      y2k_male[i,j]
+    }
+    if(!grepl("0.0",y2k_male[i,j], fixed = TRUE)){
+      y2k_male[i,j] <- 1000*(as.numeric(y2k_male[i,j]))
+    }
+  }
+}
+
+
+## for y2k_female
+for (i in 1:nrow(y2k_female)) {
+  for (j in 4:ncol(y2k_female)) {
+    if(grepl(",",y2k_female[i,j], fixed = TRUE)){
+      y2k_female[i,j] <- gsub(',','',as.character(y2k_female[i,j]))
+      y2k_female[i,j]
+    }
+    if(!grepl("0.0",y2k_female[i,j], fixed = TRUE)){
+      y2k_female[i,j] <- 1000*(as.numeric(y2k_female[i,j]))
+    }
+  }
+}
+
+
+## for y2010_total
+for (i in 1:nrow(y2010_total)) {
+  for (j in 4:ncol(y2010_total)) {
+    if(grepl(",",y2010_total[i,j], fixed = TRUE)){
+      y2010_total[i,j] <- gsub(',','',as.character(y2010_total[i,j]))
+      y2010_total[i,j]
+    }
+    if(!grepl("0.0",y2010_total[i,j], fixed = TRUE)){
+      y2010_total[i,j] <- 1000*(as.numeric(y2010_total[i,j]))
+    }
+  }
+}
+
+
+## for y2010_male
+for (i in 1:nrow(y2010_male)) {
+  for (j in 4:ncol(y2010_male)) {
+    if(grepl(",",y2010_male[i,j], fixed = TRUE)){
+      y2010_male[i,j] <- gsub(',','',as.character(y2010_male[i,j]))
+      y2010_male[i,j]
+    }
+    if(!grepl("0.0",y2010_male[i,j], fixed = TRUE)){
+      y2010_male[i,j] <- 1000*(as.numeric(y2010_male[i,j]))
+    }
+  }
+}
+
+
+## for y2010_female
+for (i in 1:nrow(y2010_female)) {
+  for (j in 4:ncol(y2010_female)) {
+    if(grepl(",",y2010_female[i,j], fixed = TRUE)){
+      y2010_female[i,j] <- gsub(',','',as.character(y2010_female[i,j]))
+      y2010_female[i,j]
+    }
+    if(!grepl("0.0",y2010_female[i,j], fixed = TRUE)){
+      y2010_female[i,j] <- 1000*(as.numeric(y2010_female[i,j]))
+    }
+  }
+}
+
+
+## for y2015_total
+for (i in 1:nrow(y2015_total)) {
+  for (j in 4:ncol(y2015_total)) {
+    if(grepl(",",y2015_total[i,j], fixed = TRUE)){
+      y2015_total[i,j] <- gsub(',','',as.character(y2015_total[i,j]))
+      y2015_total[i,j]
+    }
+    if(!grepl("0.0",y2015_total[i,j], fixed = TRUE)){
+      y2015_total[i,j] <- 1000*(as.numeric(y2015_total[i,j]))
+    }
+  }
+}
+
+
+## for y2015_male
+for (i in 1:nrow(y2015_male)) {
+  for (j in 4:ncol(y2015_male)) {
+    if(grepl(",",y2015_male[i,j], fixed = TRUE)){
+      y2015_male[i,j] <- gsub(',','',as.character(y2015_male[i,j]))
+      y2015_male[i,j]
+    }
+    if(!grepl("0.0",y2015_male[i,j], fixed = TRUE)){
+      y2015_male[i,j] <- 1000*(as.numeric(y2015_male[i,j]))
+    }
+  }
+}
+
+
+## for y2015_female
+for (i in 1:nrow(y2015_female)) {
+  for (j in 4:ncol(y2015_female)) {
+    if(grepl(",",y2015_female[i,j], fixed = TRUE)){
+      y2015_female[i,j] <- gsub(',','',as.character(y2015_female[i,j]))
+      y2015_female[i,j]
+    }
+    if(!grepl("0.0",y2015_female[i,j], fixed = TRUE)){
+      y2015_female[i,j] <- 1000*(as.numeric(y2015_female[i,j]))
+    }
+  }
+}
+
+
+## for y2019_total
+for (i in 1:nrow(y2019_total)) {
+  for (j in 4:ncol(y2019_total)) {
+    if(grepl(",",y2019_total[i,j], fixed = TRUE)){
+      y2019_total[i,j] <- gsub(',','',as.character(y2019_total[i,j]))
+      y2019_total[i,j]
+    }
+    if(!grepl("0.0",y2019_total[i,j], fixed = TRUE)){
+      y2019_total[i,j] <- 1000*(as.numeric(y2019_total[i,j]))
+    }
+  }
+}
+
+
+## for y2019_male
+for (i in 1:nrow(y2019_male)) {
+  for (j in 4:ncol(y2019_male)) {
+    if(grepl(",",y2019_male[i,j], fixed = TRUE)){
+      y2019_male[i,j] <- gsub(',','',as.character(y2019_male[i,j]))
+      y2019_male[i,j]
+    }
+    if(!grepl("0.0",y2019_male[i,j], fixed = TRUE)){
+      y2019_male[i,j] <- 1000*(as.numeric(y2019_male[i,j]))
+    }
+  }
+}
+
+
+## for y2019_female
+for (i in 1:nrow(y2019_female)) {
+  for (j in 4:ncol(y2019_female)) {
+    if(grepl(",",y2019_female[i,j], fixed = TRUE)){
+      y2019_female[i,j] <- gsub(',','',as.character(y2019_female[i,j]))
+      y2019_female[i,j]
+    }
+    if(!grepl("0.0",y2019_female[i,j], fixed = TRUE)){
+      y2019_female[i,j] <- 1000*(as.numeric(y2019_female[i,j]))
+    }
+  }
+}
+
+
+# replace all instances of 0.0 to less than 1000
+
+y2k_total[y2k_total=="0.0"] <- "less than 1000"
+y2k_male[y2k_male=="0.0"] <- "less than 1000"
+y2k_female[y2k_female=="0.0"] <- "less than 1000"
+y2010_total[y2010_total=="0.0"] <- "less than 1000"
+y2010_male[y2010_male=="0.0"] <- "less than 1000"
+y2010_female[y2010_female=="0.0"] <- "less than 1000"
+y2015_total[y2015_total=="0.0"] <- "less than 1000"
+y2015_male[y2015_male=="0.0"] <- "less than 1000"
+y2015_female[y2015_female=="0.0"] <- "less than 1000"
+y2019_total[y2019_total=="0.0"] <- "less than 1000"
+y2019_male[y2019_male=="0.0"] <- "less than 1000"
+y2019_female[y2019_female=="0.0"] <- "less than 1000"
